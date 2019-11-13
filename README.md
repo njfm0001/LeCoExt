@@ -13,6 +13,7 @@ For a reference on a typology of verbs, we refer the reader to, for instance, Fa
 2. Follow the indications on the command-line tool.
 
 ## How to cite this work
+Whenever you use this tool, please include the following citation and add a reference to their authors:
 
 Fernández-Martínez & Felices-Lago (forthcoming). Automatic Lexical Collocate Extraction for Corpus-Based Ontology Building and Refinement: A FunGramKB Case Study of the THEFT Conceptual Scenario. *Spanish Journal of Applied Linguistics.*
 
