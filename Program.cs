@@ -192,146 +192,153 @@ namespace CWordSketch_Extractor
             Console.WriteLine("***************LExical Collocate Extractor***************");
             Console.WriteLine("developed by Nicolás José Fernández Martínez");
             Console.WriteLine();
-            Console.WriteLine("Enter your WordSketch user and API key (e.g. user XXXXXXXXXXXXXX). If you do not have an account, enter the following authentication details: api_testing YNSC0B9OXN57XB48T9HWUFFLPY4TZ6OE");
-            string userResponseLogin = Console.ReadLine();
-            string[] userCredentials = userResponseLogin.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
-               .Where(x => !string.IsNullOrWhiteSpace(x))
-               .Select(s => s.Trim()).ToArray();
+            while(true)
+            {
+                Console.WriteLine("Enter your WordSketch user and API key (e.g. user XXXXXXXXXXXXXX). If you do not have an account, you can register for a free 30-day trial on https://www.sketchengine.eu/");
+                string userResponseLogin = Console.ReadLine();
+                if (userResponseLogin == "") { continue; }
+                string[] userCredentials = userResponseLogin.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                   .Where(x => !string.IsNullOrWhiteSpace(x))
+                   .Select(s => s.Trim()).ToArray();
 
-            Console.WriteLine();
-            Console.WriteLine("Write the verb(s) for the lexical collocate extraction process separated by commas: (e.g. verbs of stealing: steal, rob, hold up, stick up, thieve, embezzle, purloin, pilfer, pinch, filch, lift, nick, swipe, rustle, clean out, make off with, plunder, pillage, despoil, loot)");
-            string userResponseVerbs = Console.ReadLine();
-            string[] verbs = userResponseVerbs.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                Console.WriteLine();
+                Console.WriteLine("Write the verb(s) for the lexical collocate extraction process separated by commas: (e.g. verbs of stealing: steal, rob, hold up, stick up, thieve, embezzle, purloin, pilfer, pinch, filch, lift, nick, swipe, rustle, clean out, make off with, plunder, pillage, despoil, loot)");
+                string userResponseVerbs = Console.ReadLine();
+                if (userResponseVerbs == "") { continue; }
+                string[] verbs = userResponseVerbs.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Select(s => s.Trim()).ToArray();
+
+                bool isStealingVerb = false;
+                string[] stealingVerbs = new string[] { "steal", "rob", "plunder", "hold up", "stick up", "thieve", "embezzle", "purloin", "shoplift", "pilfer", "pinch", "filch", "lift", "nick", "swipe", "rustle", "clean out", "make off with", "plunder", "pillage", "despoil", "loot" };
+                if (stealingVerbs.Any(t => verbs.Contains(t))) { isStealingVerb = true; }
+
+                Console.WriteLine();
+                Console.WriteLine("Do any of them contain an oblique object? Press ENTER if they do not. If they do, indicate the preposition that introduces oblique objects: to, from, of (e.g. of, from)");
+                string userResponseObliqueObject = Console.ReadLine();
+                List<string> prepositionObliqueObject = userResponseObliqueObject.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                 .Where(x => !string.IsNullOrWhiteSpace(x))
-                .Select(s => s.Trim()).ToArray();
-
-            bool isStealingVerb = false;
-            string[] stealingVerbs = new string[] { "steal", "rob", "plunder", "hold up", "stick up", "thieve", "embezzle", "purloin", "shoplift", "pilfer", "pinch", "filch", "lift", "nick", "swipe", "rustle", "clean out", "make off with", "plunder", "pillage", "despoil", "loot" };
-            if (stealingVerbs.Any(t => verbs.Contains(t))) { isStealingVerb = true; }
-
-            Console.WriteLine();
-            Console.WriteLine("Do any of them contain an oblique object? Press ENTER if they do not. If they do, indicate the preposition that introduces oblique objects: to, from, of (e.g. of, from)");
-            string userResponseObliqueObject = Console.ReadLine();
-            List<string> prepositionObliqueObject = userResponseObliqueObject.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-            .Where(x => !string.IsNullOrWhiteSpace(x))
-            .Select(s => s.Trim()).ToList();
-            for (int i=0; i < prepositionObliqueObject.Count; i++)
-            {
-                if (prepositionObliqueObject[i] == "of") { prepositionObliqueObject[i] = "pp_of -p"; prepositionObliqueObject.Add(@"""%w"" of ..."); }
-                else if (prepositionObliqueObject[i] == "from") { prepositionObliqueObject[i] = "pp_from-p"; prepositionObliqueObject.Add(@"""%w"" from ..."); }
-                else if (prepositionObliqueObject[i] == "to") { prepositionObliqueObject[i] = "pp_to -p"; prepositionObliqueObject.Add(@"""%w"" to ..."); }
-            }
-            Console.WriteLine("Write the corpus or corpora for the lexical collocate extraction process separated by commas. Current options are: preloaded/bnc2, preloaded/ententen13_tt2_1, preloaded/ententen15_tt21, eng_jsi_newsfeed_1");
-            string userResponseCorpora = Console.ReadLine();
-            string[] corpora = userResponseCorpora.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                .Where(x => !string.IsNullOrWhiteSpace(x))
-                .Select(s => s.Trim()).ToArray();
-            Console.WriteLine();
-            Console.WriteLine("The gramrels consulted are: Subjects, Objects and Prepositional Objects (if any, introduced by from-, to- and/or of-phrases).");
-
-            //Perform collocate extraction from WordNet
-            if (userResponseLogin == null || userResponseLogin.Length == 0) { userCredentials[0] = "api_testing"; userCredentials[1] = "YNSC0B9OXN57XB48T9HWUFFLPY4TZ6OE"; }
-            CorpusSearchList = CollocateExtraction(verbs, prepositionObliqueObject, corpora, userCredentials[0], userCredentials[1]); //get the collocates and their scores for each of the corpora for each of verbs for each of the main syntactic constituents (i.e. gramrels)
-            //Get collocates for verbs
-            GetCollocatesVerbs(CorpusSearchList, isStealingVerb, prepositionObliqueObject);
-            if (isStealingVerb)
-            {
-                PerpetratorList = CalculateCFS(PerpetratorList, verbs, corpora);
-                GoodsList = CalculateCFS(GoodsList, verbs, corpora);
-                SourceList = CalculateCFS(SourceList, verbs, corpora);
-            }
-            else
-            {
-                SubjectList = CalculateCFS(SubjectList, verbs, corpora);
-                ObjectList = CalculateCFS(ObjectList, verbs, corpora);
-                ObliqueObjectList = CalculateCFS(ObliqueObjectList, verbs, corpora);
-            }
-
-
-            string subjects = "LIST OF SUBJECT COLLOCATES";
-            string objects = "LIST OF OBJECT COLLOCATES";
-            string obliqueobjects = "LIST OF OBLIQUE OBJECTS";
-            if (verbs.Contains("steal"))
-            {
-                subjects = "LIST OF PERPETRATORS FOR THE CONCEPTUAL SCENARIO OF THEFT";
-                objects = "LIST OF GOODS FOR THE CONCEPTUAL SCENARIO OF THEFT";
-                obliqueobjects = "LIST OF SOURCE FOR THE CONCEPTUAL SCENARIO OF THEFT";
-            }
-            StringBuilder sb = new StringBuilder();
-            Console.WriteLine();
-            Console.WriteLine(subjects);
-            sb.AppendLine(subjects);
-            if (isStealingVerb)
-            {
-                foreach (CollocateInfo collocate in PerpetratorList)
+                .Select(s => s.Trim()).ToList();
+                for (int i = 0; i < prepositionObliqueObject.Count; i++)
                 {
-                    Console.WriteLine("Word: {0} : {1}", collocate.collocate, collocate.score);
-                    sb.AppendLine("Word: " + collocate.collocate + " : " + collocate.score);
+                    if (prepositionObliqueObject[i] == "of") { prepositionObliqueObject[i] = "pp_of -p"; prepositionObliqueObject.Add(@"""%w"" of ..."); }
+                    else if (prepositionObliqueObject[i] == "from") { prepositionObliqueObject[i] = "pp_from-p"; prepositionObliqueObject.Add(@"""%w"" from ..."); }
+                    else if (prepositionObliqueObject[i] == "to") { prepositionObliqueObject[i] = "pp_to -p"; prepositionObliqueObject.Add(@"""%w"" to ..."); }
                 }
-            }
-            else
-            {
-                foreach (CollocateInfo collocate in SubjectList)
-                {
-                    Console.WriteLine("Word: {0} : {1}", collocate.collocate, collocate.score);
-                    sb.AppendLine("Word: " + collocate.collocate + " : " + collocate.score);
-                }
-            }
+                Console.WriteLine("Write the corpus or corpora for the lexical collocate extraction process separated by commas. Current options are: preloaded/bnc2, preloaded/ententen13_tt2_1, preloaded/ententen15_tt21, eng_jsi_newsfeed_1");
+                string userResponseCorpora = Console.ReadLine();
+                string[] corpora = userResponseCorpora.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Select(s => s.Trim()).ToArray();
+                Console.WriteLine();
+                Console.WriteLine("The gramrels consulted are: Subjects, Objects and Prepositional Objects (if any, introduced by from-, to- and/or of-phrases).");
 
-            Thread.Sleep(3000);            
-            sb.AppendLine();
-            Console.WriteLine();
-            Console.WriteLine(objects);
-            sb.AppendLine(objects);
-            if (isStealingVerb)
-            {
-                foreach (CollocateInfo collocate in GoodsList)
+                //Perform collocate extraction from WordNet                
+                CorpusSearchList = CollocateExtraction(verbs, prepositionObliqueObject, corpora, userCredentials[0], userCredentials[1]); //get the collocates and their scores for each of the corpora for each of verbs for each of the main syntactic constituents (i.e. gramrels)
+                GetCollocatesVerbs(CorpusSearchList, isStealingVerb, prepositionObliqueObject); //Get collocates for verbs
+                if (isStealingVerb)
                 {
-                    Console.WriteLine("Word: {0} : {1}", collocate.collocate, collocate.score);
-                    sb.AppendLine("Word: " + collocate.collocate + " : " + collocate.score);
+                    PerpetratorList = CalculateCFS(PerpetratorList, verbs, corpora);
+                    GoodsList = CalculateCFS(GoodsList, verbs, corpora);
+                    SourceList = CalculateCFS(SourceList, verbs, corpora);
                 }
-            }
-            else
-            {
-                foreach (CollocateInfo collocate in ObjectList)
+                else
                 {
-                    Console.WriteLine("Word: {0} : {1}", collocate.collocate, collocate.score);
-                    sb.AppendLine("Word: " + collocate.collocate + " : " + collocate.score);
+                    SubjectList = CalculateCFS(SubjectList, verbs, corpora);
+                    ObjectList = CalculateCFS(ObjectList, verbs, corpora);
+                    ObliqueObjectList = CalculateCFS(ObliqueObjectList, verbs, corpora);
                 }
-            }
 
-            Thread.Sleep(3000);
-            sb.AppendLine();
-            Console.WriteLine();
-            Console.WriteLine(obliqueobjects);
-            sb.AppendLine(obliqueobjects);
-            if(isStealingVerb)
-            {
-                foreach (CollocateInfo collocate in SourceList)
+                string subjects = "LIST OF SUBJECT COLLOCATES";
+                string objects = "LIST OF OBJECT COLLOCATES";
+                string obliqueobjects = "LIST OF OBLIQUE OBJECTS";
+                if (verbs.Contains("steal"))
                 {
-                    Console.WriteLine("Word: {0} : {1}", collocate.collocate, collocate.score);
-                    sb.AppendLine("Word: " + collocate.collocate + " : " + collocate.score);
+                    subjects = "LIST OF PERPETRATORS FOR THE CONCEPTUAL SCENARIO OF THEFT";
+                    objects = "LIST OF GOODS FOR THE CONCEPTUAL SCENARIO OF THEFT";
+                    obliqueobjects = "LIST OF SOURCE FOR THE CONCEPTUAL SCENARIO OF THEFT";
                 }
-            }
-            else
-            {
-                foreach (CollocateInfo collocate in ObliqueObjectList)
-                {
-                    Console.WriteLine("Word: {0} : {1}", collocate.collocate, collocate.score);
-                    sb.AppendLine("Word: " + collocate.collocate + " : " + collocate.score);
-                }
-            }
 
-            Thread.Sleep(3000);
-            Console.WriteLine();
-            Console.WriteLine("Saving output to output.txt...");
-            string output = sb.ToString();
-            string fileName = "output.txt";
-            string path = Path.Combine(Environment.CurrentDirectory, fileName);
-            File.WriteAllText(path, output);
-            Console.WriteLine("Press any key to exit.");
-            Console.ReadLine();
-            Environment.Exit(0);           
+                StringBuilder sb = new StringBuilder();
+                Console.WriteLine();
+                Console.WriteLine(subjects);
+                sb.AppendLine(subjects);
+                if (isStealingVerb)
+                {
+                    foreach (CollocateInfo collocate in PerpetratorList)
+                    {
+                        Console.WriteLine("Word: {0} : {1}", collocate.collocate, collocate.score);
+                        sb.AppendLine("Word: " + collocate.collocate + " : " + collocate.score);
+                    }
+                }
+                else
+                {
+                    foreach (CollocateInfo collocate in SubjectList)
+                    {
+                        Console.WriteLine("Word: {0} : {1}", collocate.collocate, collocate.score);
+                        sb.AppendLine("Word: " + collocate.collocate + " : " + collocate.score);
+                    }
+                }
+
+                Thread.Sleep(3000);
+                sb.AppendLine();
+                Console.WriteLine();
+                Console.WriteLine(objects);
+                sb.AppendLine(objects);
+                if (isStealingVerb)
+                {
+                    foreach (CollocateInfo collocate in GoodsList)
+                    {
+                        Console.WriteLine("Word: {0} : {1}", collocate.collocate, collocate.score);
+                        sb.AppendLine("Word: " + collocate.collocate + " : " + collocate.score);
+                    }
+                }
+                else
+                {
+                    foreach (CollocateInfo collocate in ObjectList)
+                    {
+                        Console.WriteLine("Word: {0} : {1}", collocate.collocate, collocate.score);
+                        sb.AppendLine("Word: " + collocate.collocate + " : " + collocate.score);
+                    }
+                }
+
+                Thread.Sleep(3000);
+                sb.AppendLine();
+                Console.WriteLine();
+                Console.WriteLine(obliqueobjects);
+                sb.AppendLine(obliqueobjects);
+                if (isStealingVerb)
+                {
+                    foreach (CollocateInfo collocate in SourceList)
+                    {
+                        Console.WriteLine("Word: {0} : {1}", collocate.collocate, collocate.score);
+                        sb.AppendLine("Word: " + collocate.collocate + " : " + collocate.score);
+                    }
+                }
+                else
+                {
+                    foreach (CollocateInfo collocate in ObliqueObjectList)
+                    {
+                        Console.WriteLine("Word: {0} : {1}", collocate.collocate, collocate.score);
+                        sb.AppendLine("Word: " + collocate.collocate + " : " + collocate.score);
+                    }
+                }
+
+                Thread.Sleep(3000);
+                Console.WriteLine();
+                Console.WriteLine("Saving output to output.txt...");
+                string output = sb.ToString();
+                string fileName = "output.txt";
+                string path = Path.Combine(Environment.CurrentDirectory, fileName);
+                File.WriteAllText(path, output);
+                Console.WriteLine("Press ESC to exit or any other key to perform another search.");
+                ConsoleKeyInfo key = Console.ReadKey();
+                if (key.Key == ConsoleKey.Escape)
+                {
+                    Environment.Exit(0);
+                }
+                Console.WriteLine();
+            }           
         }
     }
 }
