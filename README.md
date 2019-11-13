@@ -8,7 +8,7 @@ This tool can potentially facilitate the process of ontology building and refine
 
 For a reference on a typology of verbs, we refer the reader to, for instance, Faber & Mairal-Usón (1999).
 
-1. Download the precompiled application from this link and decompress the zip file into a folder. Execute the exe file.
+1. Download the precompiled application from this [link](https://drive.google.com/file/d/1ejArB5_kkiXA_5m6gXb9Tb0TsY7vWUkh/view?usp=sharing) and decompress the zip file into a folder. Execute the exe file.
 
 2. Follow the indications on the command-line tool.
 
