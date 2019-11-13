@@ -17,3 +17,7 @@ Whenever you use this tool, please include the following citation and add a refe
 
 Fernández-Martínez & Felices-Lago (forthcoming). Automatic Lexical Collocate Extraction for Corpus-Based Ontology Building and Refinement: A FunGramKB Case Study of the THEFT Conceptual Scenario. *Spanish Journal of Applied Linguistics.*
 
+## Copyright notice
+
+The Sketch Engine, as installed at https://app.sketchengine.eu or https://the.sketchengine.co.uk is a web service belonging to Lexical Computing CZ s.r.o. (LCC) and used under permission by the customer. 
+The present software tool is distributed under the [GNU Affero General Public License v3.0](https://choosealicense.com/licenses/agpl-3.0/)
