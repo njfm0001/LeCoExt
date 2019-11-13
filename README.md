@@ -19,5 +19,7 @@ Fernández-Martínez & Felices-Lago (forthcoming). Automatic Lexical Collocate E
 
 ## Copyright notice
 
-The Sketch Engine, as installed at https://app.sketchengine.eu or https://the.sketchengine.co.uk is a web service belonging to Lexical Computing CZ s.r.o. (LCC) and used under permission by the customer. 
-The present software tool is distributed under the [GNU Affero General Public License v3.0](https://choosealicense.com/licenses/agpl-3.0/)
+The Sketch Engine, as installed at https://app.sketchengine.eu or https://the.sketchengine.co.uk is a web service belonging to Lexical Computing CZ s.r.o. (LCC) and used under permission by the customer.
+Thus, every Sketchengine functionality abides by the license, regulations and conditions set by Lexical Computing CZ s.r.o. We do not claim ownership of any of the funcionalities offered by SketchEngine.
+
+However, the parts of the code that do not refer to WordSketch functionalities (such as computing the CFS score) can be distributed under the [GNU Affero General Public License v3.0](https://choosealicense.com/licenses/agpl-3.0/)
