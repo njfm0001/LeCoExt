@@ -27,7 +27,7 @@ namespace CWordSketch_Extractor
         static List<CollocateInfo> GoodsList { get; set; }
         static List<CollocateInfo> SourceList { get; set; }
 
-        static List<CorpusSearch> CollocateExtraction(string[] verbs, List<string> prepObliqueObject, string[] corpora, string user = "api_testing", string apiKey = "YNSC0B9OXN57XB48T9HWUFFLPY4TZ6OE")
+        static List<CorpusSearch> CollocateExtraction(string[] verbs, List<string> prepObliqueObject, string[] corpora, string user, string apiKey)
         {
             WordSketchAPIRequest wordsketchData = new WordSketchAPIRequest() //set the API connection
             {
@@ -230,6 +230,7 @@ namespace CWordSketch_Extractor
             Console.WriteLine("The gramrels consulted are: Subjects, Objects and Prepositional Objects (if any, introduced by from-, to- and/or of-phrases).");
 
             //Perform collocate extraction from WordNet
+            if (userResponseLogin == null || userResponseLogin.Length == 0) { userCredentials[0] = "api_testing"; userCredentials[1] = "YNSC0B9OXN57XB48T9HWUFFLPY4TZ6OE"; }
             CorpusSearchList = CollocateExtraction(verbs, prepositionObliqueObject, corpora, userCredentials[0], userCredentials[1]); //get the collocates and their scores for each of the corpora for each of verbs for each of the main syntactic constituents (i.e. gramrels)
             //Get collocates for verbs
             GetCollocatesVerbs(CorpusSearchList, isStealingVerb, prepositionObliqueObject);
