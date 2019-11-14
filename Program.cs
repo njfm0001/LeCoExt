@@ -64,7 +64,6 @@ namespace CWordSketch_Extractor
                     {
                         foreach (Gramrel gramrel in gramRels)
                         {
-                            if (gramrel.name.Contains("subject") || gramrel.name.Contains("object") || prepObliqueObject.Contains(gramrel.name))
                             if (gramrel.name == "subject" || gramrel.name == "object" || gramrel.name == @"subjects of ""%w""" || gramrel.name == @"objects of ""%w""" || prepObliqueObject.Contains(gramrel.name))
                             {
                                 Console.WriteLine(Environment.NewLine);
@@ -84,7 +83,7 @@ namespace CWordSketch_Extractor
                                 }
                                 GramRels grmrl = new GramRels(gramrel.name, collocateList);
                                 gramrelList.Add(grmrl);
-                            }
+                            }                           
                         }
                     }
                     Lemma = new Lemma(verb, gramrelList);
@@ -223,7 +222,7 @@ namespace CWordSketch_Extractor
                 {
                     if (prepositionObliqueObject[i] == "of") { prepositionObliqueObject[i] = "pp_of -p"; prepositionObliqueObject.Add(@"""%w"" of ..."); }
                     else if (prepositionObliqueObject[i] == "from") { prepositionObliqueObject[i] = "pp_from-p"; prepositionObliqueObject.Add(@"""%w"" from ..."); }
-                    else if (prepositionObliqueObject[i] == "to") { prepositionObliqueObject[i] = "pp_to -p"; prepositionObliqueObject.Add(@"""%w"" to ..."); }
+                    else if (prepositionObliqueObject[i] == "to") { prepositionObliqueObject[i] = "pp_to-p"; prepositionObliqueObject.Add(@"""%w"" to ..."); }
                 }
                 Console.WriteLine("Write the corpus or corpora for the lexical collocate extraction process separated by commas. Current options are: preloaded/bnc2, preloaded/ententen13_tt2_1, preloaded/ententen15_tt21, eng_jsi_newsfeed_1");
                 string userResponseCorpora = Console.ReadLine();
