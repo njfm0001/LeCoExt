@@ -1,4 +1,4 @@
-# Lexical Collocate Exttractor (LeCoExt)
+# Lexical Collocate Extractor (LeCoExt)
 ## Introduction
 LeCoExt is a command-line tool that exploits word sketches from SketchEngine and several calculations to provide a comprehensive study of the collocational behavior of a verb or group of verbs. 
 This tool can potentially facilitate the process of ontology building and refinement on the basis of the rich lexical data extracted. Further information about the practical applications of the tool can be found on XXX & YYY (forthcoming). There we provide the use of this tool with verbs of stealing.
